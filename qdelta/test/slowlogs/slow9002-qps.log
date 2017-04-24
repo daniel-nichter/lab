@@ -1,0 +1,101 @@
+# Time: 170101 00:00:00
+# User@Host: root[root] @ localhost []
+# Query_time: 1  Lock_time: 0  Rows_sent: 1  Rows_examined: 0
+select c from t where id=1;
+# User@Host: root[root] @ localhost []
+# Query_time: 1  Lock_time: 0  Rows_sent: 1  Rows_examined: 0
+select c from t where id=1;
+# User@Host: root[root] @ localhost []
+# Query_time: 1  Lock_time: 0  Rows_sent: 1  Rows_examined: 0
+select c from t where id=1;
+# User@Host: root[root] @ localhost []
+# Query_time: 1  Lock_time: 0  Rows_sent: 1  Rows_examined: 0
+select c from t where id=1;
+
+
+
+
+# Time: 170101 00:01:01
+# User@Host: root[root] @ localhost []
+# Query_time: 1  Lock_time: 0  Rows_sent: 1  Rows_examined: 0
+select c from t where id=1;
+# Time: 170101 00:01:01
+# User@Host: root[root] @ localhost []
+# Query_time: 1  Lock_time: 0  Rows_sent: 1  Rows_examined: 0
+select c from t where id=1;
+# Time: 170101 00:01:02
+# User@Host: root[root] @ localhost []
+# Query_time: 1  Lock_time: 0  Rows_sent: 1  Rows_examined: 0
+select c from t where id=1;
+# Time: 170101 00:01:03
+# User@Host: root[root] @ localhost []
+# Query_time: 1  Lock_time: 0  Rows_sent: 1  Rows_examined: 0
+select c from t where id=1;
+# Time: 170101 00:02:00
+# User@Host: root[root] @ localhost []
+# Query_time: 1  Lock_time: 0  Rows_sent: 1  Rows_examined: 0
+select c from t where id=1;
+# Time: 170101 00:02:01
+# User@Host: root[root] @ localhost []
+# Query_time: 1  Lock_time: 0  Rows_sent: 1  Rows_examined: 0
+select c from t where id=1;
+# Time: 170101 00:02:02
+# User@Host: root[root] @ localhost []
+# Query_time: 1  Lock_time: 0  Rows_sent: 1  Rows_examined: 0
+select c from t where id=1;
+# Time: 170101 00:02:03
+# User@Host: root[root] @ localhost []
+# Query_time: 1  Lock_time: 0  Rows_sent: 1  Rows_examined: 0
+select c from t where id=1;
+# Time: 170101 00:03:00
+# User@Host: root[root] @ localhost []
+# Query_time: 5  Lock_time: 0  Rows_sent: 1  Rows_examined: 0
+select x from t2 where x not in (1,2,3);
+# Time: 170101 00:03:01
+# User@Host: root[root] @ localhost []
+# Query_time: 5  Lock_time: 0  Rows_sent: 1  Rows_examined: 0
+select x from t2 where x not in (1,2,3);
+# Time: 170101 00:03:02
+# User@Host: root[root] @ localhost []
+# Query_time: 1  Lock_time: 0  Rows_sent: 1  Rows_examined: 0
+select c from t where id=1;
+# Time: 170101 00:03:03
+# User@Host: root[root] @ localhost []
+# Query_time: 1  Lock_time: 0  Rows_sent: 1  Rows_examined: 0
+select c from t where id=2;
+# Time: 170101 00:03:03
+# User@Host: root[root] @ localhost []
+# Query_time: 1  Lock_time: 0  Rows_sent: 1  Rows_examined: 0
+select c from t where id=3;
+# Time: 170101 00:03:03
+# User@Host: root[root] @ localhost []
+# Query_time: 1  Lock_time: 0  Rows_sent: 1  Rows_examined: 0
+select c from t where id=4;
+# Time: 170101 00:03:03
+# User@Host: root[root] @ localhost []
+# Query_time: 1  Lock_time: 0  Rows_sent: 1  Rows_examined: 0
+select c from t where id=5;
+# Time: 170101 00:03:03
+# User@Host: root[root] @ localhost []
+# Query_time: 1  Lock_time: 0  Rows_sent: 1  Rows_examined: 0
+select c from t where id=6;
+# Time: 170101 00:03:03
+# User@Host: root[root] @ localhost []
+# Query_time: 1  Lock_time: 0  Rows_sent: 1  Rows_examined: 0
+select c from t where id=7;
+# Time: 170101 00:03:03
+# User@Host: root[root] @ localhost []
+# Query_time: 1  Lock_time: 0  Rows_sent: 1  Rows_examined: 0
+select c from t where id=8;
+# Time: 170101 00:03:04
+# User@Host: root[root] @ localhost []
+# Query_time: 9  Lock_time: 0  Rows_sent: 1  Rows_examined: 0
+delete from c where x is null;
+# Time: 170101 00:04:00
+# User@Host: root[root] @ localhost []
+# Query_time: 1  Lock_time: 0  Rows_sent: 1  Rows_examined: 0
+select c from t where id=1;
+# Time: 170101 00:04:01
+# User@Host: root[root] @ localhost []
+# Query_time: 1  Lock_time: 0  Rows_sent: 1  Rows_examined: 0
+select c from t where id=1;

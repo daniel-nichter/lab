@@ -1,0 +1,138 @@
+{
+	"Begin": "2017-01-01T04:00:00Z",
+	"End": "2017-01-01T05:00:00Z",
+	"Global": {
+    "TotalQueries": 1080000,
+    "UniqueQueries": 5,
+    "Metrics": {
+      "TimeMetrics": {
+        "Query_time": {
+          "Cnt": 1080000,
+          "Sum": 28400,
+          "Min": 0.001,
+          "Avg": 0.010,
+          "Med": 0.010,
+          "P95": 0.050,
+          "Max": 0.100
+        }
+      }
+    }
+  },
+  "Class": {
+    "A": {
+      "Id": "A",
+      "Fingerprint": "query a",
+      "TotalQueries": 200000,
+      "Metrics": {
+        "TimeMetrics": {
+          "Query_time": {
+            "Cnt": 200000,
+            "Sum": 3600,
+            "Min": 0.001,
+						"Avg": 0.010,
+						"Med": 0.010,
+						"P95": 0.050,
+						"Max": 0.100
+          }
+        }
+      },
+      "Example": {
+        "QueryTime": 2,
+        "Query": "query A",
+        "Ts": "2007-10-15 21:43:52"
+      }
+    },
+    "B": {
+      "Id": "B",
+      "Fingerprint": "query b",
+      "TotalQueries": 140000,
+      "Metrics": {
+        "TimeMetrics": {
+          "Query_time": {
+            "Cnt": 140000,
+            "Sum": 7200,
+						"Min": 0.001,
+			      "Avg": 0.010,
+					  "Med": 0.010,
+				    "P95": 0.050,
+						"Max": 0.100
+          }
+        }
+      },
+      "Example": {
+        "QueryTime": 2,
+        "Query": "query B",
+        "Ts": "2007-10-15 21:45:10"
+      }
+    },
+    "C": {
+      "Id": "C",
+      "Fingerprint": "query c",
+      "TotalQueries": 20000,
+      "Metrics": {
+        "TimeMetrics": {
+          "Query_time": {
+            "Cnt": 20000,
+            "Sum": 3600,
+						"Min": 0.001,
+            "Avg": 0.010,
+            "Med": 0.010,
+		        "P95": 0.050,
+            "Max": 0.100
+          }
+        }
+      },
+      "Example": {
+        "QueryTime": 2,
+        "Query": "query C",
+        "Ts": "2007-10-15 21:43:52"
+      }
+    },
+    "D": {
+      "Id": "D",
+      "Fingerprint": "query d",
+      "TotalQueries": 360000,
+      "Metrics": {
+        "TimeMetrics": {
+          "Query_time": {
+            "Cnt": 360000,
+            "Sum": 7000,
+            "Min": 0.001,
+						"Avg": 0.010,
+						"Med": 0.010,
+						"P95": 0.050,
+						"Max": 0.100
+          }
+        }
+      },
+      "Example": {
+        "QueryTime": 2,
+        "Query": "query D",
+        "Ts": "2007-10-15 21:43:52"
+      }
+    },
+    "E": {
+      "Id": "E",
+      "Fingerprint": "query e",
+      "TotalQueries": 360000,
+      "Metrics": {
+        "TimeMetrics": {
+          "Query_time": {
+            "Cnt": 360000,
+            "Sum": 7000,
+            "Min": 0.001,
+						"Avg": 0.010,
+						"Med": 0.010,
+						"P95": 0.050,
+						"Max": 0.100
+          }
+        }
+      },
+      "Example": {
+        "QueryTime": 2,
+        "Query": "query E",
+        "Ts": "2007-10-15 21:43:52"
+      }
+    }
+  }
+}

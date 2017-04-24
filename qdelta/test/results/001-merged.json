@@ -1,0 +1,92 @@
+{
+  "A": {
+    "InBase": true,
+    "InComp": true,
+    "Base": {
+      "Id": "",
+      "QPS": 55.55555555555556,
+      "Load": 1,
+      "CountPct": 0.5555555555555556,
+      "ExecTimePct": 0.25
+    },
+    "Comp": {
+      "Id": "",
+      "QPS": 55.55555555555556,
+      "Load": 1,
+      "CountPct": 0.18518518518518517,
+      "ExecTimePct": 0.1267605633802817
+    }
+  },
+  "B": {
+    "InBase": true,
+    "InComp": true,
+    "Base": {
+      "Id": "",
+      "QPS": 38.888888888888886,
+      "Load": 2,
+      "CountPct": 0.3888888888888889,
+      "ExecTimePct": 0.5
+    },
+    "Comp": {
+      "Id": "",
+      "QPS": 38.888888888888886,
+      "Load": 2,
+      "CountPct": 0.12962962962962962,
+      "ExecTimePct": 0.2535211267605634
+    }
+  },
+  "C": {
+    "InBase": true,
+    "InComp": true,
+    "Base": {
+      "Id": "",
+      "QPS": 5.555555555555555,
+      "Load": 1,
+      "CountPct": 0.05555555555555555,
+      "ExecTimePct": 0.25
+    },
+    "Comp": {
+      "Id": "",
+      "QPS": 5.555555555555555,
+      "Load": 1,
+      "CountPct": 0.018518518518518517,
+      "ExecTimePct": 0.1267605633802817
+    }
+  },
+  "D": {
+    "InBase": false,
+    "InComp": true,
+    "Base": {
+      "Id": "",
+      "QPS": 0,
+      "Load": 0,
+      "CountPct": 0,
+      "ExecTimePct": 0
+    },
+    "Comp": {
+      "Id": "",
+      "QPS": 100,
+      "Load": 1.9444444444444444,
+      "CountPct": 0.3333333333333333,
+      "ExecTimePct": 0.24647887323943662
+    }
+  },
+  "E": {
+    "InBase": false,
+    "InComp": true,
+    "Base": {
+      "Id": "",
+      "QPS": 0,
+      "Load": 0,
+      "CountPct": 0,
+      "ExecTimePct": 0
+    },
+    "Comp": {
+      "Id": "",
+      "QPS": 100,
+      "Load": 1.9444444444444444,
+      "CountPct": 0.3333333333333333,
+      "ExecTimePct": 0.24647887323943662
+    }
+  }
+}
