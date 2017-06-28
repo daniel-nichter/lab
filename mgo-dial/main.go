@@ -29,8 +29,9 @@ var (
 	flagTLSKey  string
 	flagTLSCA   string
 
-	flagTimeout uint
-	flagDebug   bool
+	flagTimeout  uint
+	flagDebug    bool
+	flagIsMaster bool
 )
 
 func init() {
@@ -47,6 +48,17 @@ func init() {
 
 	flag.UintVar(&flagTimeout, "timeout", 3000, "Dial timeout (milliseconds)")
 	flag.BoolVar(&flagDebug, "debug", false, "Enable mgo debug to STDERR")
+	flag.BoolVar(&flagIsMaster, "ismaster", false, "Print partial isMaster result after login")
+}
+
+type Node struct {
+	Host           string            `bson:"me"`
+	ReplSetName    string            `bson:"setName"`
+	ReplSetVersion uint              `bson:"setVersion"`
+	PrimaryHost    string            `bson:"primary"`
+	IsMatser       bool              `bson:"ismaster"`
+	Secondary      bool              `bson:"secondary"`
+	Tags           map[string]string `bson:"tags"`
 }
 
 func main() {
@@ -141,6 +153,14 @@ func main() {
 
 	if err := s.Login(cred); err != nil {
 		log.Fatalf("mgo.Session.Login: %s", err)
+	}
+
+	if flagIsMaster {
+		var node Node
+		if err := s.Run("isMaster", &node); err != nil {
+			log.Fatal(err)
+		}
+		fmt.Printf("isMaster: %#v\n", node)
 	}
 
 	fmt.Println("SUCCESS")
