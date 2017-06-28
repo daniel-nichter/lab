@@ -1,0 +1,4 @@
+*.swp
+*.out
+qdelta/bin/qdelta/qdelta
+mgo-dial/mgo-dial
