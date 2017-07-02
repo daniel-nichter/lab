@@ -32,6 +32,9 @@ const (
 )
 
 var (
+	flagUsername     string
+	flagPassword     string
+	flagAuthDb       string
 	flagDb           string
 	flagC            string
 	flagDocs         uint
@@ -45,6 +48,9 @@ var (
 )
 
 func init() {
+	flag.StringVar(&flagUsername, "username", "", "Username")
+	flag.StringVar(&flagPassword, "password", "", "Password")
+	flag.StringVar(&flagAuthDb, "auth-db", "", "Auth db")
 	flag.StringVar(&flagDb, "db", DEFAULT_DB, "Database")
 	flag.StringVar(&flagC, "c", DEFAULT_C, "Collection")
 	flag.UintVar(&flagDocs, "docs", DEFAULT_N, "Number of docs to insert")
@@ -102,6 +108,17 @@ func main() {
 	// Connection info doesn't change, but we'll need a new connection for
 	// every test. So this little factory makes *conn that connect() can turn
 	// into new connections with mgo.Session and mgo.Collection ready to use.
+	var cred *mgo.Credential
+	if flagUsername != "" && flagPassword != "" {
+		cred = &mgo.Credential{
+			Username:  flagUsername,
+			Password:  flagPassword,
+			Source:    flagAuthDb,
+			Mechanism: "SCRAM-SHA-1",
+		}
+		log.Printf("login: %#v", *cred)
+	}
+
 	safe := &mgo.Safe{
 		W:        flagSafeW,
 		WMode:    flagSafeWMode,
@@ -123,6 +140,11 @@ func main() {
 		c.s, err = mgo.Dial(c.url)
 		if err != nil {
 			return nil, fmt.Errorf("mgo.Dial: %s", err)
+		}
+		if cred != nil {
+			if err := c.s.Login(cred); err != nil {
+				log.Fatal(err)
+			}
 		}
 		c.s.SetSafe(c.safe) // set write concern
 		c.C = c.s.DB(c.db).C(c.c)

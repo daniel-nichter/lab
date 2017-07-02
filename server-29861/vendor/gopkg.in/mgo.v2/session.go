@@ -695,13 +695,11 @@ func (db *Database) Login(user, pass string) error {
 // Logout is explicitly called for the same database, or the session is
 // closed.
 func (s *Session) Login(cred *Credential) error {
-	fmt.Println("<<< 1 login...")
 	socket, err := s.acquireSocket(true)
 	if err != nil {
 		return err
 	}
 	defer socket.Release()
-	fmt.Println("<<< 2 login...")
 	credCopy := *cred
 	if cred.Source == "" {
 		if cred.Mechanism == "GSSAPI" {
@@ -710,17 +708,14 @@ func (s *Session) Login(cred *Credential) error {
 			credCopy.Source = s.sourcedb
 		}
 	}
-	fmt.Println("<<< 3 login...")
 	err = socket.Login(credCopy)
 	if err != nil {
 		return err
 	}
 
-	fmt.Println("<<< 4 login...")
 	s.m.Lock()
 	s.creds = append(s.creds, credCopy)
 	s.m.Unlock()
-	fmt.Println("<<< 5 login...")
 	return nil
 }
 
