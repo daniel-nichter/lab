@@ -10,6 +10,7 @@ import (
 	"log"
 	"math/rand"
 	"os"
+	"strings"
 	"time"
 
 	"gopkg.in/mgo.v2"
@@ -17,16 +18,17 @@ import (
 )
 
 const (
-	DEFAULT_DB           = "test"
-	DEFAULT_C            = "test"
-	DEFAULT_N            = 100000
-	DEFAULT_ITER         = 1
-	DEFAULT_WAIT         = 0
-	DEFAULT_SAFE_W       = 2
-	DEFAULT_SAFE_WMODE   = ""
-	DEFAULT_SAFE_TIMEOUT = 1000
-	DEFAULT_SAFE_FSYNC   = false
-	DEFAULT_SAFE_J       = true
+	DEFAULT_DB            = "test"
+	DEFAULT_C             = "test"
+	DEFAULT_N             = 100000
+	DEFAULT_ITER          = 1
+	DEFAULT_WAIT          = 0
+	DEFAULT_SAFE_W        = 2
+	DEFAULT_SAFE_WMODE    = ""
+	DEFAULT_SAFE_TIMEOUT  = 1000
+	DEFAULT_SAFE_FSYNC    = false
+	DEFAULT_SAFE_J        = true
+	DEFAULT_STEPDOWN_TIME = 10
 )
 
 var (
@@ -60,14 +62,19 @@ func init() {
 	log.SetOutput(os.Stderr)
 }
 
+type writeResult struct {
+	n   uint
+	err string
+}
+
 type conn struct {
-	url   string
-	db    string
-	c     string
-	safe  *mgo.Safe
-	s     *mgo.Session
-	C     *mgo.Collection
-	nchan chan uint // number of reported (not actual) docs written
+	url  string
+	db   string
+	c    string
+	safe *mgo.Safe
+	s    *mgo.Session
+	C    *mgo.Collection
+	wr   chan writeResult
 }
 
 var docs []interface{}
@@ -106,11 +113,11 @@ func main() {
 	log.Printf("url: %s\n", args[0])
 	newConn := func() (*conn, error) {
 		c := &conn{
-			url:   args[0],
-			db:    flagDb,
-			c:     flagC,
-			safe:  safe,
-			nchan: make(chan uint, 1),
+			url:  args[0],
+			db:   flagDb,
+			c:    flagC,
+			safe: safe,
+			wr:   make(chan writeResult, 1),
 		}
 		var err error
 		c.s, err = mgo.Dial(c.url)
@@ -151,6 +158,16 @@ func main() {
 			log.Fatal(err)
 		}
 
+		// First make sure the lab is clean: 0 docs in the collection
+		n, err := conn1.remove()
+		if err != nil {
+			log.Fatal(err)
+		}
+		if n != 0 {
+			log.Fatalf("%s.%s has %d docs at start of test %d, expected 0",
+				conn1.db, conn1.c, n, testNo)
+		}
+
 		// Start insert
 		go conn1.insert()
 
@@ -164,11 +181,10 @@ func main() {
 
 		// Wait up to 30s for rs to recover
 		log.Printf("rs recovering")
+		time.Sleep(time.Duration(DEFAULT_STEPDOWN_TIME) * time.Second)
 		var conn3 *conn
-		timeout := time.After(30 * time.Second)
+		timeout := time.After(10 * time.Second)
 		for {
-			time.Sleep(2 * time.Second) // rs takes a few seconds to recover
-
 			var err error
 			conn3, err = newConn()
 			if err == nil {
@@ -181,10 +197,12 @@ func main() {
 				log.Fatal("Timeout waiting for rs to recover")
 			default:
 			}
+
+			time.Sleep(1 * time.Second) // rs takes a few seconds to recover
 		}
 
 		// Wait for insert to return n docs reported written
-		nReported := <-conn1.nchan
+		wr := <-conn1.wr
 
 		// Remove all docs to see how many were actually written
 		nActual, err := conn3.remove()
@@ -193,8 +211,17 @@ func main() {
 		}
 
 		// Log the results
-		ok := nReported == nActual
-		fmt.Printf("%d,%d,%t\n", nReported, nActual, ok)
+		ok := wr.n == nActual
+
+		errStr := ""
+		if strings.Contains(wr.err, "operation was interrupted") {
+			errStr = "int"
+		} else if strings.Contains(wr.err, "EOF") {
+			errStr = "eof"
+		} else {
+			errStr = "ukn"
+		}
+		fmt.Printf("%d,%d,%.3f,%s,%t\n", wr.n, nActual, wait.Seconds(), errStr, ok)
 
 		// Clean up test and repeat
 		conn1.s.Close()
@@ -208,14 +235,15 @@ func (c *conn) insert() {
 	err := c.C.Insert(docs...)
 	if err != nil {
 		lerr := err.(*mgo.LastError)
-		c.nchan <- uint(lerr.N)
+		log.Printf("insert err: %s", lerr.Err)
+		c.wr <- writeResult{n: uint(lerr.N), err: lerr.Err}
 	}
-	c.nchan <- uint(len(docs))
+	c.wr <- writeResult{n: uint(len(docs))}
 }
 
 func (c *conn) stepDown() {
 	var res bson.D
-	c.s.Run(bson.D{{"replSetStepDown", 10}, {"secondaryCatchUpPeriodSecs", 5}}, res)
+	c.s.Run(bson.D{{"replSetStepDown", DEFAULT_STEPDOWN_TIME}, {"secondaryCatchUpPeriodSecs", DEFAULT_STEPDOWN_TIME / 2}}, res)
 }
 
 func (c *conn) remove() (uint, error) {
