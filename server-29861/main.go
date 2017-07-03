@@ -20,7 +20,7 @@ import (
 const (
 	DEFAULT_DB            = "test"
 	DEFAULT_C             = "test"
-	DEFAULT_N             = 100000
+	DEFAULT_N             = 250000
 	DEFAULT_ITER          = 1
 	DEFAULT_WAIT          = 0
 	DEFAULT_SAFE_W        = 2
@@ -241,7 +241,7 @@ func main() {
 		} else if strings.Contains(wr.err, "EOF") {
 			errStr = "eof"
 		} else {
-			errStr = "ukn"
+			errStr = "aok"
 		}
 		fmt.Printf("%d,%d,%.3f,%s,%t\n", wr.n, nActual, wait.Seconds(), errStr, ok)
 
@@ -255,9 +255,9 @@ func main() {
 func (c *conn) insert() {
 	log.Printf("inserting...")
 	err := c.C.Insert(docs...)
-	if err != nil {
-		lerr := err.(*mgo.LastError)
-		log.Printf("insert err: %s", lerr.Err)
+	lerr := err.(*mgo.LastError)
+	if lerr.Err != "" {
+		log.Printf("insert err: %s (%#v)", lerr.Err, err)
 		c.wr <- writeResult{n: uint(lerr.N), err: lerr.Err}
 	}
 	c.wr <- writeResult{n: uint(len(docs))}
