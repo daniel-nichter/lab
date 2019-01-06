@@ -17,3 +17,5 @@ exclude:
   - vendor/gems/
   - vendor/ruby/
   - README.md
+
+theme: jekyll-theme-slate
