@@ -1,0 +1,19 @@
+title: Spin Cycle
+description: >-
+  Spin Cycle automates infrastructure tasks at scale.
+url: https://square.github.io/spincycle
+baseurl: "" # the subpath of your site, e.g. /blog
+twitter_username: square
+github_username: square
+markdown: kramdown
+theme: minima
+plugins:
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor/bundle/
+  - vendor/cache/
+  - vendor/gems/
+  - vendor/ruby/
+  - README.md
