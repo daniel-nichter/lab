@@ -14,7 +14,7 @@ import (
 	"os"
 	"time"
 
-	"gopkg.in/mgo.v2"
+	"github.com/globalsign/mgo"
 )
 
 var (
@@ -32,6 +32,7 @@ var (
 	flagTimeout  uint
 	flagDebug    bool
 	flagIsMaster bool
+	flagLogin    bool
 )
 
 func init() {
@@ -49,6 +50,7 @@ func init() {
 	flag.UintVar(&flagTimeout, "timeout", 3000, "Dial timeout (milliseconds)")
 	flag.BoolVar(&flagDebug, "debug", false, "Enable mgo debug to STDERR")
 	flag.BoolVar(&flagIsMaster, "ismaster", false, "Print partial isMaster result after login")
+	flag.BoolVar(&flagLogin, "login", true, "Session.Login() with credentials")
 }
 
 type Node struct {
@@ -83,24 +85,29 @@ func main() {
 
 	// Load TLS if given
 	var tlsConfig *tls.Config
-	if flagTLSCert != "" && flagTLSKey != "" {
-		cert, err := tls.LoadX509KeyPair(flagTLSCert, flagTLSKey)
-		if err != nil {
-			log.Fatal(err)
+	if (flagTLSCert != "" && flagTLSKey != "") || flagTLSCA != "" {
+		tlsConfig = &tls.Config{}
+
+		if flagTLSCA != "" {
+			caCert, err := ioutil.ReadFile(flagTLSCA)
+			if err != nil {
+				log.Fatal(err)
+			}
+			caCertPool := x509.NewCertPool()
+			caCertPool.AppendCertsFromPEM(caCert)
+			tlsConfig.RootCAs = caCertPool
+			fmt.Println("TLS root CA loaded")
 		}
 
-		caCert, err := ioutil.ReadFile(flagTLSCA)
-		if err != nil {
-			log.Fatal(err)
+		if flagTLSCert != "" && flagTLSKey != "" {
+			cert, err := tls.LoadX509KeyPair(flagTLSCert, flagTLSKey)
+			if err != nil {
+				log.Fatal(err)
+			}
+			tlsConfig.Certificates = []tls.Certificate{cert}
+			tlsConfig.BuildNameToCertificate()
+			fmt.Println("TLS cert/key loaded")
 		}
-		caCertPool := x509.NewCertPool()
-		caCertPool.AppendCertsFromPEM(caCert)
-		tlsConfig = &tls.Config{
-			Certificates: []tls.Certificate{cert},
-			RootCAs:      caCertPool,
-		}
-		tlsConfig.BuildNameToCertificate()
-		fmt.Println("TLS loaded")
 	} else {
 		fmt.Println("TLS cert and key not given")
 	}
@@ -110,6 +117,12 @@ func main() {
 	if err != nil {
 		log.Fatalf("mgo.ParseURL: %s", err)
 	}
+	dialInfo.Username = flagUsername
+	dialInfo.Password = flagPassword
+	dialInfo.Source = flagSource
+	dialInfo.Mechanism = flagMechanism
+	dialInfo.Service = flagService
+	dialInfo.ServiceHost = flagServiceHost
 	timeout := time.Duration(flagTimeout) * time.Millisecond
 	fmt.Printf("timeout: %s\n", timeout)
 	dialInfo.DialServer = func(addr *mgo.ServerAddr) (net.Conn, error) {
@@ -141,24 +154,27 @@ func main() {
 	fmt.Println("connected")
 
 	// Login
-	cred := &mgo.Credential{
-		Username:    flagUsername,
-		Password:    flagPassword,
-		Source:      flagSource,
-		Service:     flagService,
-		ServiceHost: flagServiceHost,
-		Mechanism:   flagMechanism,
-	}
-	log.Printf("mgo.Credential: %#v", *cred)
-
-	if err := s.Login(cred); err != nil {
-		log.Fatalf("mgo.Session.Login: %s", err)
+	if flagLogin {
+		cred := &mgo.Credential{
+			Username:    flagUsername,
+			Password:    flagPassword,
+			Source:      flagSource,
+			Service:     flagService,
+			ServiceHost: flagServiceHost,
+			Mechanism:   flagMechanism,
+		}
+		log.Printf("mgo.Credential: %#v", *cred)
+		if err := s.Login(cred); err != nil {
+			log.Printf("mgo.Session.Login: %s", err)
+		} else {
+			fmt.Println("login successful")
+		}
 	}
 
 	if flagIsMaster {
 		var node Node
 		if err := s.Run("isMaster", &node); err != nil {
-			log.Fatal(err)
+			log.Fatalf("isMaster: %s", err)
 		}
 		fmt.Printf("isMaster: %#v\n", node)
 	}
